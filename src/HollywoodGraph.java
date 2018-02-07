@@ -1,35 +1,33 @@
+import java.util.*;
+
 /**
  * Joey Ferguson
- * 9 December 2016
+ * 7 February 2018
  */
-
-import java.util.*;
 
 public class HollywoodGraph {
     private SymbolGraph SG;                         // initializes symbol graph
     private CC CC;                                  // initializes connected components
-    Stack<String> components;
-    int[] connected;
+    private Stack<String> components;
 
-    public HollywoodGraph() {
+    private HollywoodGraph() {
         SG = new SymbolGraph("movies.txt","/");     // sets symbol graph to txt file
         CC = new CC(SG.G());                        // sets connected components the graph of the symbol graph
 
         components = new Stack<>();
-        connected = new int[CC.count()];
+        int[] connected = new int[CC.count()];
 
         RedBlackBST<String, Integer> RBT = new RedBlackBST<>();
 
         String[] lines = (new In("movies.txt")).readAllLines();
-        for(String line : lines) {
+        for (String line : lines) {
             String[] parts = line.split("/");
             String movie = null;
             for (String part : parts) {
                 if (movie == null) {
                     movie = part;
                 } else {
-                    String actor = part;
-                    RBT.put(actor, 0);
+                    RBT.put(part, 0);
                 }
             }
         }
@@ -48,7 +46,7 @@ public class HollywoodGraph {
         double[] distArray;                         // keeps track of average, maximum, and actor maximum
         LinkedQueue<Integer> actorQueue;            // iterates through actors
 
-        public Actor(String name) {
+        private Actor(String name) {
             this.name = name;
             BFP = new BreadthFirstPaths(SG.G(), SG.index(name));
             actorQueue = new LinkedQueue<>();
@@ -148,22 +146,24 @@ public class HollywoodGraph {
         }
     }
 
-    public HollywoodActor getActorDetails(String name) {
+    private HollywoodActor getActorDetails(String name) {
         return new Actor(name);
     }
 
-    public Iterable<String> connectedComponents() { return components; }
+    private Iterable<String> connectedComponents() {
+        return components;
+    }
 
-    public int connectedComponentsCount() {
+    private int connectedComponentsCount() {
         return CC.count();
     }
 
-    public int connectedActorsCount(String name) {
+    private int connectedActorsCount(String name) {
         if (name == null) { throw new NoSuchElementException("Name cannot be null"); }
         return CC.size(SG.index(name))/2 + 1;
     }
 
-    public double hollywoodNumber(String name) {
+    private double hollywoodNumber(String name) {
         if (name == null) { throw new NoSuchElementException("Name cannot be null"); }
         return (new Actor(name)).distanceAverage();
     }
@@ -187,9 +187,12 @@ public class HollywoodGraph {
         StdOut.println(HG.getActorDetails("Fisher, Carrie").actorPathLength("Lloyd, Christopher (I)"));
         StdOut.println(HG.getActorDetails("Hamill, Mark (I)").actorPathLength("Lloyd, Christopher (I)"));
         StdOut.println(HG.getActorDetails("Kidman, Nicole").moviePath("Bacon, Kevin"));
+
         StdOut.println(HG.connectedComponents());
         StdOut.println(HG.connectedComponentsCount());
         StdOut.println(HG.connectedActorsCount("Bacon, Kevin"));
+        StdOut.println(HG.connectedActorsCount("Fisher, Carrie"));
+
         StdOut.println(HG.hollywoodNumber("Bacon, Kevin"));
         StdOut.println(HG.hollywoodNumber("Ford, Harrison (I)"));
         StdOut.println(HG.hollywoodNumber("Fisher, Carrie"));
